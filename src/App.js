@@ -9,17 +9,21 @@ function App() {
   const [sort, setSort] = useState("");
   const [filter, setFilter] = useState("");
 
+  const computedTodos = todos
+    .filter((todo) => {
+      if (filter === "ALL") return true;
+      if (filter === "DONE") return todo.isDone === true;
+      if (filter === "NOT_DONE") return todo.isDone === false;
+    })
+    .sort((a, b) => {
+      if (sort === "none") return 0;
+      if (sort === "createdAt") return b.createdAt - a.createdAt;
+      if (sort === "content") return a.content.localeCompare(b.content);
+    });
+
   return (
     <div className="App">
       <h1>TODO LIST</h1>
-      <div>
-        <label htmlFor="sort">정렬 : </label>
-        <select value={sort} onChange={(e) => setSort(e.target.value)}>
-          <option value="none">없음</option>
-          <option value="createdAt">최신순</option>
-          <option value="content">가나다순</option>
-        </select>
-      </div>
       <div>
         <label>필터 : </label>
         <input type="radio" value="ALL" checked={filter === "ALL"} onChange={(e) => setFilter(e.target.value)} />
@@ -33,6 +37,14 @@ function App() {
           onChange={(e) => setFilter(e.target.value)}
         />
         <label>미완료</label>
+      </div>
+      <div>
+        <label htmlFor="sort">정렬 : </label>
+        <select value={sort} onChange={(e) => setSort(e.target.value)}>
+          <option value="none">생성순</option>
+          <option value="createdAt">최신순</option>
+          <option value="content">가나다순</option>
+        </select>
       </div>
       <div>
         <input
@@ -59,7 +71,7 @@ function App() {
         </button>
       </div>
       <div>
-        {todos.map((todo, index) => (
+        {computedTodos.map((todo, index) => (
           <div key={todo.id}>
             <input
               type="checkbox"
