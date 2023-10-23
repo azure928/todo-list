@@ -12,7 +12,9 @@ export const Select = ({ values, labels, value, onChange }) => {
   return (
     <select value={value} onChange={onChange}>
       {values_labels_map.map((item) => (
-        <option value={item.value}>{item.label}</option>
+        <option key={item.value} value={item.value}>
+          {item.label}
+        </option>
       ))}
     </select>
   );

@@ -14,6 +14,7 @@ export const RadioGroup = ({ values, labels, value, onChange }) => {
     <>
       {values_labels_map.map((item) => (
         <Radio
+          key={item.value}
           value={item.value}
           checked={value === item.value}
           label={item.label}
