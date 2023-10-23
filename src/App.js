@@ -1,12 +1,15 @@
 import { v4 as uuid } from "uuid";
 import "./App.css";
 import { useState } from "react";
+import { Radio } from "./components/Radio";
+import { RadioGroup } from "./components/RadioGroup";
+import { Select } from "./components/Select";
 
 function App() {
   // state 새로운 값으로 대체한다
   const [inputValue, setInputValue] = useState("");
   const [todos, setTodos] = useState([]);
-  const [sort, setSort] = useState("");
+  const [sort, setSort] = useState("NONE");
   const [filter, setFilter] = useState("ALL");
 
   const [updateValue, setUpdateValue] = useState("");
@@ -21,35 +24,31 @@ function App() {
       if (filter === "NOT_DONE") return todo.isDone === false;
     })
     .sort((a, b) => {
-      if (sort === "none") return 0;
-      if (sort === "createdAt") return b.createdAt - a.createdAt;
-      if (sort === "content") return a.content.localeCompare(b.content);
+      if (sort === "NONE") return 0;
+      if (sort === "CREATED_AT") return b.createdAt - a.createdAt;
+      if (sort === "CONTENT") return a.content.localeCompare(b.content);
     });
 
   return (
     <div className="App">
       <h1>TODO LIST</h1>
       <div>
-        <label>필터 : </label>
-        <input type="radio" value="ALL" checked={filter === "ALL"} onChange={(e) => setFilter(e.target.value)} />
-        <label>전체</label>
-        <input type="radio" value="DONE" checked={filter === "DONE"} onChange={(e) => setFilter(e.target.value)} />
-        <label>완료</label>
-        <input
-          type="radio"
-          value="NOT_DONE"
-          checked={filter === "NOT_DONE"}
+        <span>필터 : </span>
+        <RadioGroup
+          values={["ALL", "DONE", "NOT_DONE"]}
+          labels={["전체", "완료", "미완료"]}
+          value={filter}
           onChange={(e) => setFilter(e.target.value)}
         />
-        <label>미완료</label>
       </div>
       <div>
-        <label htmlFor="sort">정렬 : </label>
-        <select value={sort} onChange={(e) => setSort(e.target.value)}>
-          <option value="none">생성순</option>
-          <option value="createdAt">최신순</option>
-          <option value="content">가나다순</option>
-        </select>
+        <span htmlFor="sort">정렬 : </span>
+        <Select
+          values={["NONE", "CREATED_AT", "CONTENT"]}
+          labels={["생성순", "최신순", "가나다순"]}
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+        />
       </div>
       {/*
       SPA(Single Page Application), CSR(client Side Rendering  <-> SSR, Server side rendering)
@@ -95,9 +94,16 @@ function App() {
               }}
             />
             {updateTargetIndex === index ? (
-              <input value={updateValue} onChange={(e) => setUpdateValue(e.target.value)} />
+              <input
+                value={updateValue}
+                onChange={(e) => setUpdateValue(e.target.value)}
+              />
             ) : (
-              <span style={{ textDecoration: todo.isDone ? "line-through" : "" }}>{todo.content}</span>
+              <span
+                style={{ textDecoration: todo.isDone ? "line-through" : "" }}
+              >
+                {todo.content}
+              </span>
             )}
             <button
               onClick={() => {
@@ -112,7 +118,9 @@ function App() {
               onClick={() => {
                 if (isUpdateMode) {
                   const nextTodos = todos.map((todo, index) =>
-                    index === updateTargetIndex ? { ...todo, content: updateValue } : todo
+                    index === updateTargetIndex
+                      ? { ...todo, content: updateValue }
+                      : todo
                   );
                   setTodos(nextTodos);
                   setUpdateValue("");
