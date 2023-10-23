@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button } from "./Button";
 
 export const TodoItem = ({
   todo,
@@ -41,15 +42,15 @@ export const TodoItem = ({
           {todo.content}
         </span>
       )}
-      <button
+      <Button
         onClick={() => {
           onTodoListDelete(todo.id);
         }}
         disabled={isUpdateMode}
       >
         DEL
-      </button>
-      <button
+      </Button>
+      <Button
         onClick={() => {
           if (isUpdateMode) {
             onTodoListUpdate(updateTargetId, { content: inputValue });
@@ -62,7 +63,7 @@ export const TodoItem = ({
         disabled={isUpdateMode && todo.id !== updateTargetId}
       >
         UPDATE
-      </button>
+      </Button>
     </div>
   );
 };

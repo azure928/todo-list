@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { RadioGroup } from "./components/RadioGroup";
 import { Select } from "./components/Select";
 import { TodoItem } from "./components/TodoItem";
+import { Button } from "./components/Button";
 
 function App() {
   // state 새로운 값으로 대체한다
@@ -15,6 +16,7 @@ function App() {
 
   useEffect(() => {
     const storedTodos = JSON.parse(localStorage.getItem("todos"));
+    if (!storedTodos || storedTodos.length === 0) return;
     setTodos(storedTodos);
   }, []);
 
@@ -40,32 +42,34 @@ function App() {
 
   return (
     <div className="App">
-      <h1>TODO LIST</h1>
-      <div>
-        <span>필터 : </span>
-        <RadioGroup
-          values={["ALL", "DONE", "NOT_DONE"]}
-          labels={["전체", "완료", "미완료"]}
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-        />
-      </div>
+      <h1 className="header">TODO LIST</h1>
+      <div className="filter-container">
+        <div>
+          <span>필터 : </span>
+          <RadioGroup
+            values={["ALL", "DONE", "NOT_DONE"]}
+            labels={["전체", "완료", "미완료"]}
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          />
+        </div>
 
-      <div>
-        <span htmlFor="sort">정렬 : </span>
-        <Select
-          values={["NONE", "CREATED_AT", "CONTENT"]}
-          labels={["생성순", "최신순", "가나다순"]}
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
-        />
+        <div>
+          <span htmlFor="sort">정렬 : </span>
+          <Select
+            values={["NONE", "CREATED_AT", "CONTENT"]}
+            labels={["생성순", "최신순", "가나다순"]}
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+          />
+        </div>
       </div>
-
       {/*
       SPA(Single Page Application), CSR(client Side Rendering  <-> SSR, Server side rendering)
       client가 dom그리기를 제어한다.
       */}
       <form
+        className="add-input-container"
         onSubmit={(e) => {
           // form은 기본적으로 새로고침을 trigger, why? 새로운 html파일을 내려받아야하니까
           e.preventDefault();
@@ -81,6 +85,7 @@ function App() {
         }}
       >
         <input
+          className="add-input"
           // Input의 제어권을 React(JS)가 가지고 있을 수 있게, state값을 주입했다.
           value={inputValue}
           // Input의 값이 변하는 이벤트가 발생했을 때, 제어권을 가진 React(JS)의 state값을 변경한다.
@@ -89,10 +94,10 @@ function App() {
           }}
           disabled={isUpdateMode}
         />
-        <button disabled={!inputValue || isUpdateMode}>{"ADD"}</button>
+        <Button disabled={!inputValue || isUpdateMode}>{"ADD"}</Button>
       </form>
 
-      <div>
+      <div className="todo-list-container">
         {computedTodos.map((todo) => (
           <TodoItem
             key={todo.id}
